@@ -1,8 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:substring_highlight/substring_highlight.dart';
+import 'highlight.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,7 +26,6 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
-
 class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = false;
 
@@ -54,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchAutoCompleteData();
   }
@@ -71,77 +68,70 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           : Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Autocomplete(
-                    optionsBuilder: (TextEditingValue textEditingValue) {
-                      if (textEditingValue.text.isEmpty) {
-                        return const Iterable<String>.empty();
-                      } else {
-                        return autoCompleteData.where((word) => word
-                            .toLowerCase()
-                            .contains(textEditingValue.text.toLowerCase()));
-                      }
-                    },
-                    optionsViewBuilder:
-                        (context, Function(String) onSelected, options) {
-                      return Material(
-                        elevation: 4,
-                        child: ListView.separated(
-                          padding: EdgeInsets.zero,
-                          itemBuilder: (context, index) {
-                            final option = options.elementAt(index);
-
-                            return ListTile(
-                              // title: Text(option.toString()),
-                              title: SubstringHighlight(
-                                text: option.toString(),
-                                term: controller.text,
-                                textStyleHighlight: TextStyle(fontWeight: FontWeight.w700),
-                              ),
-                              subtitle: Text("This is subtitle"),
-                              onTap: () {
-                                onSelected(option.toString());
-                              },
-                            );
+              child: Autocomplete(
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text.isEmpty) {
+                    return const Iterable<String>.empty();
+                  }
+                  else {
+                    return autoCompleteData.where((word) => word
+                        .toLowerCase()
+                        .contains(textEditingValue.text.toLowerCase()));
+                  }
+                },
+                optionsViewBuilder: (context, Function(String) onSelected, options) {
+                  return Material(
+                    elevation: 4,
+                    child: ListView.separated(
+                      padding: EdgeInsets.zero,
+                      itemBuilder: (context, index) {
+                        final option = options.elementAt(index);
+                        return ListTile(
+                          title: SubstringHighlight(
+                            text: option.toString(),
+                            term: controller.text,
+                            textStyleHighlight: TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          subtitle: Text("This is subtitle"),
+                          onTap: () {
+                            onSelected(option.toString());
                           },
-                          separatorBuilder: (context, index) => Divider(),
-                          itemCount: options.length,
-                        ),
-                      );
-                    },
-                    onSelected: (selectedString) {
-                      print(selectedString);
-                    },
-                    fieldViewBuilder:
-                        (context, controller, focusNode, onEditingComplete) {
-                      this.controller = controller;
-
-                      return TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        onEditingComplete: onEditingComplete,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
-                          ),
-                          hintText: "Search Something",
-                          prefixIcon: Icon(Icons.search),
-                        ),
-                      );
-                    },
-                  )
-                ],
-              ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => Divider(),
+                      itemCount: options.length,
+                    ),
+                  );
+                },
+                onSelected: (selectedString) {
+                  print(selectedString);
+                },
+                fieldViewBuilder:
+                    (context, controller, focusNode, onEditingComplete) {
+                  this.controller = controller;
+                  return TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    onEditingComplete: onEditingComplete,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      hintText: "Search Something",
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                  );
+                },
+              )
             ),
     );
   }
